@@ -10,9 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
+import environ
 
 from pathlib import Path
 from configurations import Configuration
+from google.oauth2 import service_account
 
 
 class Base(Configuration):
@@ -142,6 +144,10 @@ class Base(Configuration):
 
 
 class Dev(Base):
+    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    GS_BUCKET_NAME = os.getenv('POETSTER_BUCKET_NAME', '')
+    STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -150,5 +156,34 @@ class Dev(Base):
             'PASSWORD': os.getenv('P_DB_PASSWORD', ''),
             'HOST': 'batyr.db.elephantsql.com',
             'PORT': 5432,
+        }
+    }
+
+
+class Production(Base):
+    # Comment out Production class if env not available to run locally.
+    env = environ.Env(
+        # set casting, default value
+        DEBUG=(bool, False)
+    )
+    # reading .env file
+    environ.Env.read_env('.env')
+
+    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    GS_BUCKET_NAME = os.getenv('POETSTER_BUCKET_NAME', '')
+    STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+
+    SECRET_KEY = env('SECRET_KEY')
+
+    DEBUG = env('DEBUG')
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME':  env('DB_NAME'),
+            'USER': env('DB_USER'),
+            'PASSWORD': env('DB_PASSWORD'),
+            'HOST': env('DB_HOST'),
+            'PORT': env('DB_PORT'),
         }
     }
