@@ -20,14 +20,19 @@ class AbstractModel(models.Model):
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, email, password=None, **extra_fields):
+    def create_user(self, email, pen_name, password=None, **extra_fields):
         """Creates and saves a new user"""
         if not email:
             raise ValueError('User must have an email address')
 
-        user = self.model(email=self.normalize_email(email), **extra_fields)
+        if not pen_name:
+            raise ValueError('Please choose a pen name')
+
+        user = self.model(email=self.normalize_email(email), pen_name=pen_name, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+        profile = UserProfile.objects.create(user=user)
+        profile.save(using=self._db)
 
         return user
 
