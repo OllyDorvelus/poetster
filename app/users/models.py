@@ -74,6 +74,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.pen_name
 
+    def like_poem(self, poem):
+        user = self
+        is_liked = poem.likes.filter(user=user).exists()
+        poem.likes.remove(user) if is_liked else poem.likes.add(user)
+        return not is_liked
+
 
 class UserProfile(AbstractModel):
     user = models.OneToOneField('User', on_delete=models.PROTECT, related_name='profile')
@@ -98,3 +104,7 @@ class UserProfile(AbstractModel):
         self.subscriptions.remove(user_to_subscribe.profile) if is_following \
             else self.subscriptions.add(user_to_subscribe.profile)
         return not is_following
+
+    @property
+    def poem_count(self):
+        return self.user.poems.count()
