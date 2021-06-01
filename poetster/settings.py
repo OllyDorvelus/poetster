@@ -48,7 +48,8 @@ class Base(Configuration):
     ]
 
     MY_APPS = [
-        'app.users'
+        'app.users',
+        'app.poems'
     ]
 
     THIRD_PARTY_APPS = [
