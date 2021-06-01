@@ -6,9 +6,9 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 
-router.register('genres', GenreViewSet)
-router.register('topics', TopicViewSet)
-router.register('poems', PoemViewSet)
+router.register('genres', GenreViewSet, basename='api-genres')
+router.register('topics', TopicViewSet, basename='api-topics')
+router.register('poems', PoemViewSet, basename='api-poems')
 
 urlpatterns = [
     path('', include(router.urls)),
