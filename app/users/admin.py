@@ -32,4 +32,10 @@ class UserAdmin(BaseUserAdmin):
     )
 
 
+class UserProfileAdmin(admin.ModelAdmin):
+    class Meta:
+        model = models.UserProfile
+
+
 admin.site.register(models.User, UserAdmin)
+admin.site.register(models.UserProfile, UserProfileAdmin)

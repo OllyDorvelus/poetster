@@ -68,3 +68,28 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.pen_name
+
+
+class UserProfile(AbstractModel):
+    user = models.OneToOneField('User', on_delete=models.PROTECT, related_name='profile')
+    subscriptions = models.ManyToManyField('self', blank=True, related_name='subscribers', symmetrical=False)
+    bio = models.TextField(blank=True, help_text='A brief description of you.', max_length=500)
+
+    def __str__(self):
+        return self.user.pen_name
+
+    # Subscription methods
+
+    @property
+    def subscription_count(self):
+        return self.subscriptions.exclude(id=self.id).count()
+
+    @property
+    def subscriber_count(self):
+        return self.subscribers.exclude(id=self.id).count()
+
+    def subscribe(self, user_to_subscribe):
+        is_following = self.subscriptions.filter(id=user_to_subscribe.profile.id).exists()
+        self.subscriptions.remove(user_to_subscribe.profile) if is_following \
+            else self.subscriptions.add(user_to_subscribe.profile)
+        return not is_following
