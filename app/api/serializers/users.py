@@ -29,6 +29,13 @@ class UserSerializer(serializers.ModelSerializer):
             count = instance.profile.subscriber_count
         return count
 
+    def update(self, instance, validated_data):
+        bio = validated_data.get('profile', {}).get("bio", "")
+        pen_name = validated_data.get("pen_name", None)
+        instance.pen_name = pen_name
+        instance.profile.bio = bio
+        return instance
+
 
 class UserCreateSerializer(serializers.ModelSerializer):
     """Serializer for the users object"""
