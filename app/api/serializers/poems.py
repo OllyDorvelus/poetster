@@ -22,6 +22,7 @@ class TopicSerializer(serializers.ModelSerializer):
 class PoemSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     genre = GenreSerializer(read_only=True)
+    topics = TopicSerializer(read_only=True, many=True)
 
     class Meta:
         model = Poem
@@ -29,7 +30,7 @@ class PoemSerializer(serializers.ModelSerializer):
             'id',
             'user',
             'title',
-            'genre'
+            'genre',
             'content',
             'about',
             'topics',
