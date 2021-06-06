@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from app.api.serializers.poems import PoemSerializer, GenreSerializer, TopicSerializer, PoemCreateSerializer
 from app.api.permissions import UserObjectPermission
+from app.api.pagination import StandardResultsSetPagination
 
 
 class GenreViewSet(viewsets.ReadOnlyModelViewSet):
@@ -29,6 +30,7 @@ class PoemViewSet(viewsets.ModelViewSet):
     serializer_class = PoemSerializer
     queryset = Poem.objects.filter(active=True)
     permission_classes = [UserObjectPermission]
+    pagination_class = StandardResultsSetPagination
 
     def get_serializer_class(self):
         serializer_class = self.serializer_class
