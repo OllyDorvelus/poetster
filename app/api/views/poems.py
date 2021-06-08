@@ -1,10 +1,14 @@
-from app.poems.models import Poem, Genre, Topic
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
+
+from app.poems.models import Poem, Genre, Topic
 from app.api.serializers.poems import PoemSerializer, GenreSerializer, TopicSerializer, PoemCreateSerializer
 from app.api.permissions import UserObjectPermission
 from app.api.pagination import StandardResultsSetPagination
+
 
 
 class GenreViewSet(viewsets.ReadOnlyModelViewSet):
@@ -32,6 +36,11 @@ class PoemViewSet(viewsets.ModelViewSet):
     permission_classes = [UserObjectPermission]
     pagination_class = StandardResultsSetPagination
 
+    def get_permissions(self):
+        if self.action == 'create':
+            self.permission_classes = [IsAuthenticated]
+        return super(PoemViewSet, self).get_permissions()
+
     def get_serializer_class(self):
         serializer_class = self.serializer_class
         if self.action == 'create':
@@ -48,3 +57,11 @@ class PoemViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         return serializer.save()
+
+    # extra routes
+    @action(detail=False, methods=['GET'], name='Get your poems', permission_classes=[IsAuthenticated])
+    def me(self, request):
+        user_poems = Poem.objects.filter(user=request.user)
+        poems = PoemSerializer(user_poems, many=True).data
+        return Response(poems)
+
