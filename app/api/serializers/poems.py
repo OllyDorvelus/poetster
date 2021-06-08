@@ -23,6 +23,7 @@ class PoemSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     genre = GenreSerializer(read_only=True)
     topics = TopicSerializer(read_only=True, many=True)
+    like_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Poem
@@ -34,7 +35,11 @@ class PoemSerializer(serializers.ModelSerializer):
             'content',
             'about',
             'topics',
+            'like_count'
         ] + END_FIELDS
+
+    def get_like_count(self, instance):
+        return instance.like_count
 
 
 class PoemCreateSerializer(serializers.ModelSerializer):

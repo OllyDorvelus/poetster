@@ -76,7 +76,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def like_poem(self, poem):
         user = self
-        is_liked = poem.likes.filter(user=user).exists()
+        is_liked = poem.likes.filter(id=user.id).exists()
         poem.likes.remove(user) if is_liked else poem.likes.add(user)
         return not is_liked
 

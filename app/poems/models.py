@@ -21,6 +21,10 @@ class Poem(AbstractModel, ActiveMixin):
     def __str__(self):
         return f'{self.user} - {self.title}'
 
+    @property
+    def like_count(self):
+        return self.likes.count()
+
 
 class Genre(AbstractModel, ActiveMixin):
     name = models.CharField(max_length=55)
